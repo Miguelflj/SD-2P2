@@ -2,7 +2,7 @@ import Pyro5.api
 import os
 import sys
 import threading
-
+from logs import Log
 
 #funções de manipulação de arquivos proprios
 def getFile(filename):
@@ -23,6 +23,7 @@ def load_name_files(namedir):
 #funçao que estabele contato entre nós (porta aberta pro mundo)
 @Pyro5.api.expose
 class TorrentM(object):
+    #ajuda a gravar arquivo
     def download(self,filename):
         filename_new = os.getcwd() + '/' + sys.argv[1] + '/'+ filename
         content_new_file = getFile(filename_new)
@@ -43,6 +44,7 @@ def main():
    
     try:
         if( len(sys.argv) >= 2 ):
+            log = Log("logUser.txt")
             namedir = sys.argv[1]
             client_ON = True
             try:
@@ -71,7 +73,7 @@ def main():
 
         while(client_ON):
             
-            op = int(input("Your options:\n[1] Show all files\n[2] Download\n[3] Update\n[4] Exit\n")) 
+            op = int(input("Your options:\n[1] Show all files\n[2] Download\n[3] Update\n\n[4] Show file[5] Exit\n")) 
             os.system('clear')
             if(op == 1):
                 print(network.show_filenames(myId))
@@ -79,21 +81,42 @@ def main():
 
                 idNeig  = int(input("What's the neighbor's ID?\n"))
                 filename = str(input("What is the desired file name?\n"))
-                
-                torrent = Pyro5.api.Proxy("PYRONAME:Client:"+str(idNeig))
-                content = torrent.download(filename)
-                if(content == -1):
+                if(myId == idNeig):
                     print("Fail download")
+                    print("This ID is your! Dahhrr")
                 else:
-                    print("Sucess download")
-                    filename_new = os.getcwd() + '/' + sys.argv[1] + '/'+ filename
-                    new_file = open(filename_new,'w')
-                    new_file.write(content)
-                    new_file.close()       
-                    network.update_files(myId,load_name_files(namedir))
+                    torrent = Pyro5.api.Proxy("PYRONAME:Client:"+str(idNeig))
+                    content = torrent.download(filename)
+                    if(content == -1):
+                        print("Fail download")
+                    else:
+                        print("Sucess download")
+                        filename_new = os.getcwd() + '/' + sys.argv[1] + '/'+ filename
+                        new_file = open(filename_new,'w')
+                        new_file.write(content)
+                        new_file.close()       
+                        network.update_files(myId,load_name_files(namedir))
+                        log.new_log("FILE TRANSFER CLIENT:{} -> CLIENT:{} NAME FILE:{}".format(idNeig,myId,filename))
             elif(op == 3):
                     network.update_files(myId,load_name_files(namedir))
             elif(op == 4):
+                idNeig  = int(input("What's the neighbor's ID?\n"))
+                filename = str(input("What is the desired file name?\n"))
+                if(idNeig == myId):
+                    content = getFile(filename)
+                    print("Name file {}\nCONTENT:\n".format(filename))
+                    print(content)
+                    log.new_log("SHOW FILE CLIENT:{} FILE:{}".format(myId,filename))
+                else:
+                    torrent = Pyro5.api.Proxy("PYRONAME:Client:"+str(idNeig))
+                    content = torrent.download(filename)
+                    if(content == -1):
+                        print("None")
+                    else:
+                        print("Name file {}\nCONTENT:\n".format(filename))
+                        print(content)
+                        log.new_log("SHOW FILE DO CLIENT:{} FILE:{}".format(idNeig,filename))
+            elif(op == 5):
                 client_ON = False
                 print(network.disconnect(myId))
             else:

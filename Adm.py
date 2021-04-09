@@ -4,14 +4,13 @@ from logs import Log
 max_size = 50
 clients = []
 files = []
-log = Log()
+log = Log('logAdm.txt')
 
 #Gerencia a geração de id's e verifica o limite de clientes na rede
 def verrified_limit(file):
     idC = 0
 
     if( len(clients) < max_size ):
-
         for i in clients:
             if(i == -1):
                 clients[idC] = idC
@@ -23,10 +22,13 @@ def verrified_limit(file):
         files.append(file)
         return idC
     else: 
+
         for i in clients:
             if(i == -1):
                 clients[idC] = idC
                 files[idC] = file
+               
+
                 return idC
             idC += 1
 
@@ -41,9 +43,10 @@ class ServerP2P(object):
     def connect(self, client_filenames):
         idC = verrified_limit(client_filenames)
         if( idC >= 0):
-            
+          
             log.new_log("CLIENT:{} CONNECT".format(idC))
-
+            for f in client_filenames:
+                log.new_log("CLIENT:{} INSERT NEW_FILE:{}".format(idC,f))
             print("Success connection!!!\n Welcome to the network.")
             return idC
         else:
