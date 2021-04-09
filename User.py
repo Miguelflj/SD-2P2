@@ -73,7 +73,7 @@ def main():
 
         while(client_ON):
             
-            op = int(input("Your options:\n[1] Show all files\n[2] Download\n[3] Update\n\n[4] Show file[5] Exit\n")) 
+            op = int(input("Your options:\n[1] Show all files\n[2] Download\n[3] Update\n[4] Show file\n[5] Exit\n")) 
             os.system('clear')
             if(op == 1):
                 print(network.show_filenames(myId))
@@ -103,8 +103,9 @@ def main():
                 idNeig  = int(input("What's the neighbor's ID?\n"))
                 filename = str(input("What is the desired file name?\n"))
                 if(idNeig == myId):
-                    content = getFile(filename)
-                    print("Name file {}\nCONTENT:\n".format(filename))
+                    filename_new = os.getcwd() + '/' + sys.argv[1] + '/'+ filename
+                    content = getFile(filename_new)
+                    print("Name file {}\nCONTENT:".format(filename))
                     print(content)
                     log.new_log("SHOW FILE CLIENT:{} FILE:{}".format(myId,filename))
                 else:
@@ -113,7 +114,7 @@ def main():
                     if(content == -1):
                         print("None")
                     else:
-                        print("Name file {}\nCONTENT:\n".format(filename))
+                        print("Name file {}\nCONTENT:".format(filename))
                         print(content)
                         log.new_log("SHOW FILE DO CLIENT:{} FILE:{}".format(idNeig,filename))
             elif(op == 5):
