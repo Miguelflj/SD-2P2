@@ -19,8 +19,7 @@ def load_name_files(namedir):
     name_files = os.listdir(path)
     return name_files
 
-
-#funçao que estabele contato entre nós (porta aberta pro mundo)
+#funcao que estabele contato entre nós (porta aberta pro pequeno mundo da nossa maquina)
 @Pyro5.api.expose
 class TorrentM(object):
     #ajuda a gravar arquivo
@@ -28,8 +27,30 @@ class TorrentM(object):
         filename_new = os.getcwd() + '/' + sys.argv[1] + '/'+ filename
         content_new_file = getFile(filename_new)
         return content_new_file
+
+
+def load_balancing(myId, ids):
     
+    if(len(ids) > 1):
+        dif = -1
+        id_file = -1
+        for i in ids:
+            #metrica pra simular o vizinho mais proximo
+            cur_dif = abs(myId - i)
+            if((dif == -1) or (cur_dif < dif)):
+                dif = cur_dif
+                id_file = i
+
+        return id_file
+
+    else:
+        if(len(ids) == 1):
+            return ids[0]
+        else:
+            return -1    
 #se torna um peer no servidor de nomes
+
+
 def insert_client_in_network(myId):
     #Talvez este não seja o melhor nome
 
@@ -79,17 +100,23 @@ def main():
                 print(network.show_filenames(myId))
             elif(op == 2):
 
-                idNeig  = int(input("What's the neighbor's ID?\n"))
+                
                 filename = str(input("What is the desired file name?\n"))
+                ids = network.files_id(filename)
+                idNeig = load_balancing(myId, ids)
+
                 if(myId == idNeig):
                     print("Fail download")
-                    print("This ID is your! Dahhrr")
+                    print("You already have the file")
                 else:
                     torrent = Pyro5.api.Proxy("PYRONAME:Client:"+str(idNeig))
                     content = torrent.download(filename)
                     if(content == -1):
                         print("Fail download")
+
                     else:
+
+
                         print("Sucess download")
                         filename_new = os.getcwd() + '/' + sys.argv[1] + '/'+ filename
                         new_file = open(filename_new,'w')
@@ -97,6 +124,8 @@ def main():
                         new_file.close()       
                         network.update_files(myId,load_name_files(namedir))
                         log.new_log("FILE TRANSFER CLIENT:{} -> CLIENT:{} NAME FILE:{}".format(idNeig,myId,filename))
+            
+            
             elif(op == 3):
                     network.update_files(myId,load_name_files(namedir))
             elif(op == 4):

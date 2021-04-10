@@ -82,6 +82,14 @@ class ServerP2P(object):
                 log.new_log("CLIENT:{} UPDATE ALL FILES".format(idC))
                 return("Updated!")
 
+    def files_id(self, filename):
+        all_ids = []
+        for i in range( len(files) ):
+            if(files[i] != None):
+                for j in range(len(files[i])):
+                    if(files[i][j] == filename):
+                        all_ids.append(i)
+        return all_ids
 
 daemon = Pyro5.api.Daemon()
 ns = Pyro5.api.locate_ns()
