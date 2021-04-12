@@ -1,0 +1,37 @@
+Metadata-Version: 1.0
+Name: Trab1-SD
+Version: 1.0
+Summary: Estudo de caso RMI
+Home-page: https://github.com/Miguelflj/SD-2P2
+Author: Miguel Freitas
+Author-email: miguelfljunior@gmail.com
+License: MIT
+Description: # TRABALHO DE SISTEMAS DISTRIBUIDOS - UFMT
+        
+        
+        ## SISTEMA DE ARQUIVOS DISTRIBUIDOS
+        ### Rede P2P centralizada
+            Estudo de caso da tecnologia RMI (Remote Method Invocation)
+        ### Bibliotecas
+        
+        - Pyro5
+        - threading
+        - sys
+        - os
+        - datetime
+        
+        #### Estrutura
+        
+        > Processo Usuário
+        
+        > Processo Administrador (Um obrigatório conectado ao servidor de nomes)
+        
+        > Logs
+        
+        #### Características
+        - [x] Balanceador de cargas para transferência dos arquivos (criado uma métrica de proximidade)
+        - [x] Gerenciador de Logs
+        - [x] Máximo de 50 usuários na rede
+        - [x] Café quente
+        
+Platform: UNKNOWN

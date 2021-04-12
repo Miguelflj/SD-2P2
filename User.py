@@ -156,9 +156,10 @@ def main():
         print("\nBye!")
         print(network.disconnect(myId))
         
-
-main()
-
+try:
+    main()
+except(Pyro5.errors.ConnectionClosedError):
+    print("O administrador caiu! =( \n Desculpe o transtorne.")
    
 
 

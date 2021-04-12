@@ -78,9 +78,15 @@ class ServerP2P(object):
                 return("It was already up to date")
             else :
                 #está desatualizado
+                for f in client_files:
+                    if(f not in files[idC]):
+                        log.new_log("CLIENT:{} INSERT NEW FILE: {}".format(idC, f))
+                for f in files[idC]:
+                    if(  f not in client_files):
+                        log.new_log("CLIENT:{} REMOVE  FILE: {}".format(idC, f))
+
                 files[idC] = client_files
-                log.new_log("CLIENT:{} UPDATE ALL FILES".format(idC))
-                return("Updated!")
+                return("Updated files list!")
 
     def files_id(self, filename):
         all_ids = []
@@ -96,5 +102,6 @@ ns = Pyro5.api.locate_ns()
 uri = daemon.register(ServerP2P)
 ns.register("Server", uri)
 
-print("Ready.")
+print("Obs.: Não se esqueça! Para cada usuário você precisa dar um diretório")
+print("Ready. ")
 daemon.requestLoop()
